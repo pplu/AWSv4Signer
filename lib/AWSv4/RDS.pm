@@ -13,7 +13,7 @@ package AWSv4::RDS;
   has user => (is => 'ro', isa => 'Str', required => 1);
   has port => (is => 'ro', isa => 'Int', default => 3306);
 
-  has '+params' => (lazy => 1, default => sub {
+  sub build_params {
     my $self = shift;
     {
       'Action' => 'connect',
@@ -24,13 +24,13 @@ package AWSv4::RDS;
       'X-Amz-Expires' => $self->expires,
       'X-Amz-SignedHeaders' => uri_escape($self->signed_header_list),
     }
-  });
+  }
 
-  has '+headers' => (lazy => 1, default => sub {
+  sub build_headers {
     my $self = shift;
     {
       Host => $self->host . ':' . $self->port,
     }
-  });
+  }
 
 1;

@@ -15,7 +15,7 @@ package AWSv4::S3;
 
   use URI::Escape;
 
-  has '+params' => (lazy => 1, default => sub {
+  sub build_params {
     my $self = shift;
     {
       'X-Amz-Algorithm' => $self->aws_algorithm,
@@ -24,13 +24,13 @@ package AWSv4::S3;
       'X-Amz-Expires' => $self->expires,
       'X-Amz-SignedHeaders' => uri_escape($self->signed_header_list),
     }
-  });
+  }
 
-  has '+headers' => (lazy => 1, default => sub {
+  sub build_headers {
     my $self = shift;
     {
       Host => $self->bucket_host,
     }
-  });
+  }
 
 1;

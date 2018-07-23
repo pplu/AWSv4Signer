@@ -26,8 +26,8 @@ package AWSv4;
     $self->time->ymd('') . 'T' . $self->time->hms('') . 'Z';
   });
 
-  has params  => (is => 'ro', isa => 'HashRef', default => sub { {} });
-  has headers => (is => 'ro', isa => 'HashRef', default => sub { {} });
+  has params  => (is => 'ro', isa => 'HashRef', lazy => 1, builder => 'build_params');
+  has headers => (is => 'ro', isa => 'HashRef', lazy => 1, builder => 'build_headers');
   has content => (is => 'ro', isa => 'Str', default => '');
   has dont_sign_payload => (is => 'ro', isa => 'Bool', default => 0);
 
