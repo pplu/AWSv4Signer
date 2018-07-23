@@ -29,7 +29,7 @@ package AWSv4;
   has params  => (is => 'ro', isa => 'HashRef', lazy => 1, builder => 'build_params');
   has headers => (is => 'ro', isa => 'HashRef', lazy => 1, builder => 'build_headers');
   has content => (is => 'ro', isa => 'Str', default => '');
-  has dont_sign_payload => (is => 'ro', isa => 'Bool', default => 0);
+  has unsigned_payload => (is => 'ro', isa => 'Bool', default => 0);
 
   has canonical_qstring => (is => 'ro', isa => 'Str', lazy => 1, default => sub {
     my $self = shift;
@@ -48,11 +48,7 @@ package AWSv4;
 
   has hashed_payload => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
     my $self = shift;
-    if ($self->dont_sign_payload) {
-      return 'UNSIGNED-PAYLOAD'
-    } else {
-      return Digest::SHA::sha256_hex($self->content);
-    }
+    return ($self->unsigned_payload) ? 'UNSIGNED-PAYLOAD' : Digest::SHA::sha256_hex($self->content);
   });
 
   has signed_header_list => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {

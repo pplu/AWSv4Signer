@@ -11,9 +11,7 @@ package AWSv4::S3;
     join '.', $self->bucket, 's3.amazonaws.com';
   });
 
-  has '+dont_sign_payload' => (default => 1);
-
-  use URI::Escape;
+  has '+unsigned_payload' => (default => 1);
 
   sub build_params {
     my $self = shift;
