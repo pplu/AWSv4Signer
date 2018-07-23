@@ -2,6 +2,7 @@ package AWSv4;
   use Moose;
   use Time::Piece;
   use Digest::SHA qw//;
+  use URI::Escape qw//;
 
   has access_key => (is => 'ro', isa => 'Str', required => 1);
   has secret_key => (is => 'ro', isa => 'Str', required => 1);
@@ -33,7 +34,7 @@ package AWSv4;
 
   has canonical_qstring => (is => 'ro', isa => 'Str', lazy => 1, default => sub {
     my $self = shift;
-    join '&', map { $_ . '=' . $self->params->{ $_ } } sort keys %{ $self->params };
+    join '&', map { $_ . '=' . URI::Escape::uri_escape($self->params->{ $_ }) } sort keys %{ $self->params };
   });
 
   has header_list => (is => 'ro', isa => 'ArrayRef', init_arg => undef, lazy => 1, default => sub {

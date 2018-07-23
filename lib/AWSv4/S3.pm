@@ -17,10 +17,10 @@ package AWSv4::S3;
     my $self = shift;
     {
       'X-Amz-Algorithm' => $self->aws_algorithm,
-      'X-Amz-Credential' => uri_escape($self->access_key . "/" . $self->credential_scope),
+      'X-Amz-Credential' => $self->access_key . "/" . $self->credential_scope,
       'X-Amz-Date' => $self->date_timestamp,
       'X-Amz-Expires' => $self->expires,
-      'X-Amz-SignedHeaders' => uri_escape($self->signed_header_list),
+      'X-Amz-SignedHeaders' => $self->signed_header_list,
     }
   }
 

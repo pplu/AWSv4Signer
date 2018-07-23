@@ -2,8 +2,6 @@ package AWSv4::RDS;
   use Moose;
   extends 'AWSv4';
 
-  use URI::Escape;
-
   has '+expires' => (default => 900);
   has '+service' => (default => 'rds-db');
   has '+method' => (default => 'GET');
@@ -19,10 +17,10 @@ package AWSv4::RDS;
       'Action' => 'connect',
       'DBUser' => $self->user,
       'X-Amz-Algorithm' => $self->aws_algorithm,
-      'X-Amz-Credential' => uri_escape($self->access_key . "/" . $self->credential_scope),
+      'X-Amz-Credential' => $self->access_key . "/" . $self->credential_scope,
       'X-Amz-Date' => $self->date_timestamp,
       'X-Amz-Expires' => $self->expires,
-      'X-Amz-SignedHeaders' => uri_escape($self->signed_header_list),
+      'X-Amz-SignedHeaders' => $self->signed_header_list,
     }
   }
 
