@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 
+use strict;
+use warnings;
+
 use Test::More;
 use AWSv4::RDS;
 
@@ -33,5 +36,8 @@ cmp_ok($signer->string_to_sign, 'eq', $expected_string_to_sign);
 
 my $signature = 'b77c366f1379046852039d21f733035fa73696275c03dd2908ef267c3049d831';
 cmp_ok($signer->signature, 'eq', $signature);
+
+my $expected_signed_qstring = 'Action=connect&DBUser=mysqluser&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAKIAKIAKIAKIAKIAK%2F20180722%2Feu-west-1%2Frds-db%2Faws4_request&X-Amz-Date=20180722T202236Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=b77c366f1379046852039d21f733035fa73696275c03dd2908ef267c3049d831';
+cmp_ok($signer->signed_qstring, 'eq', $expected_signed_qstring);
 
 done_testing;

@@ -99,4 +99,9 @@ package AWSv4;
     Digest::SHA::hmac_sha256_hex($self->string_to_sign, $self->signing_key);
   });
 
+  has signed_qstring => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    $self->canonical_qstring . '&X-Amz-Signature=' . $self->signature;
+  });
+
 1;
