@@ -13,28 +13,25 @@ package AWSv4::EKS;
   has '+method' => (default => 'POST');
   has '+uri' => (default => '/');
 
-  #has '+dont_sign_payload' => (default => 1);
-
-  use URI::Escape;
-
-  has '+params' => (lazy => 1, default => sub {
+  sub build_params {
     my $self = shift;
     {
       'Action' => 'GetCallerIdentity',
       'Version' => '2011-06-15',
       'X-Amz-Algorithm' => $self->aws_algorithm,
-      'X-Amz-Credential' => uri_escape($self->access_key . "/" . $self->credential_scope),
+      'X-Amz-Credential' => $self->access_key . "/" . $self->credential_scope,
       'X-Amz-Date' => $self->date_timestamp,
       'X-Amz-Expires' => $self->expires,
-      'X-Amz-SignedHeaders' => uri_escape($self->signed_header_list),
+      'X-Amz-SignedHeaders' => $self->signed_header_list,
     }
-  });
+  }
 
-  has '+headers' => (lazy => 1, default => sub {
+  sub build_headers {
     my $self = shift;
     {
       Host => 'sts.amazonaws.com',
-     'X-K8s-AWS-Id' => $self->cluster_id,
+     'x-k8s-aws-id' => $self->cluster_id,
     }
+  }
   });
 1;
