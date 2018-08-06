@@ -2,6 +2,9 @@ package AWSv4::EKS;
   use Moose;
   extends 'AWSv4';
 
+  use JSON::MaybeXS qw//;
+  use MIME::Base64 qw//;
+
   has prefix => (is => 'ro', init_arg => undef, isa => 'Str', default => 'k8s-aws-v1');
   has sts_url => (is => 'ro', init_arg => undef, isa => 'Str', default => 'https://sts.amazonaws.com/');
 
@@ -33,5 +36,27 @@ package AWSv4::EKS;
      'x-k8s-aws-id' => $self->cluster_id,
     }
   }
+
+  has qstring_64 => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    MIME::Base64::encode_base64url($self->signed_qstring);
   });
+
+  has token => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    $self->prefix . '.' . MIME::Base64::encode_base64url($self->sts_url) . '_' . $self->qstring_64;
+  });
+
+  has k8s_json => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    JSON::MaybeXS::encode_json({
+      kind => 'ExecCredential',
+      apiVersion => 'client.authentication.k8s.io/v1alpha1',
+      spec => {},
+      status => {
+        token => $self->token,
+      }
+    });
+  });
+
 1;
