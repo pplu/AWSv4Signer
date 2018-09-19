@@ -1,12 +1,13 @@
 package AWSv4::S3;
-  use Moose;
+  use Moo;
+  use Types::Standard qw/Str/;
   extends 'AWSv4';
 
-  has bucket => (is => 'ro', isa => 'Str');
+  has bucket => (is => 'ro', isa => Str);
 
   has '+service' => (default => 's3');
 
-  has bucket_host => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+  has bucket_host => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
     my $self = shift;
     join '.', $self->bucket, 's3.amazonaws.com';
   });

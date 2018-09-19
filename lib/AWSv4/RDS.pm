@@ -1,15 +1,16 @@
 package AWSv4::RDS;
-  use Moose;
+  use Moo;
   extends 'AWSv4';
+  use Types::Standard qw/Str Int/;
 
   has '+expires' => (default => 900);
   has '+service' => (default => 'rds-db');
   has '+method' => (default => 'GET');
   has '+uri' => (default => '/');
 
-  has host => (is => 'ro', isa => 'Str', required => 1);
-  has user => (is => 'ro', isa => 'Str', required => 1);
-  has port => (is => 'ro', isa => 'Int', default => 3306);
+  has host => (is => 'ro', isa => Str, required => 1);
+  has user => (is => 'ro', isa => Str, required => 1);
+  has port => (is => 'ro', isa => Int, default => 3306);
 
   sub build_params {
     my $self = shift;
