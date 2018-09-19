@@ -1,14 +1,15 @@
 package AWSv4::EKS;
-  use Moose;
+  use Moo;
   extends 'AWSv4';
+  use Types::Standard qw/Str/;
 
   use JSON::MaybeXS qw//;
   use MIME::Base64 qw//;
 
-  has prefix => (is => 'ro', init_arg => undef, isa => 'Str', default => 'k8s-aws-v1');
-  has sts_url => (is => 'ro', init_arg => undef, isa => 'Str', default => 'https://sts.amazonaws.com/');
+  has prefix => (is => 'ro', init_arg => undef, isa => Str, default => 'k8s-aws-v1');
+  has sts_url => (is => 'ro', init_arg => undef, isa => Str, default => 'https://sts.amazonaws.com/');
 
-  has cluster_id => (is => 'ro', isa => 'Str', required => 1);
+  has cluster_id => (is => 'ro', isa => Str, required => 1);
 
   has '+expires' => (default => 60);
   has '+region' => (default => 'us-east-1');
@@ -37,17 +38,17 @@ package AWSv4::EKS;
     }
   }
 
-  has qstring_64 => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+  has qstring_64 => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
     my $self = shift;
     MIME::Base64::encode_base64url($self->signed_qstring);
   });
 
-  has token => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+  has token => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
     my $self = shift;
     $self->prefix . '.' . MIME::Base64::encode_base64url($self->sts_url) . '_' . $self->qstring_64;
   });
 
-  has k8s_json => (is => 'ro', isa => 'Str', init_arg => undef, lazy => 1, default => sub {
+  has k8s_json => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
     my $self = shift;
     JSON::MaybeXS::encode_json({
       kind => 'ExecCredential',
