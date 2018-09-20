@@ -14,8 +14,6 @@ my $signer = AWSv4::EKS->new(
   secret_key => '1111111111111111111111111111111111111111',
 );
 
-diag ($signer->canonical_request);
-
 my $signature = '7a9107b9da0017ba3c84c6331d1aed6afe1de75da6c39ea786c01c31141052a8';
 cmp_ok($signer->signature, 'eq', $signature);
 
@@ -23,4 +21,4 @@ my $expected_signed_qstring = 'Action=GetCallerIdentity&Version=2011-06-15&X-Amz
 
 cmp_ok($signer->signed_qstring, 'eq', $expected_signed_qstring);
 
-
+done_testing;

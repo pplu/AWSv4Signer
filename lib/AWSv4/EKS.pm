@@ -14,7 +14,8 @@ package AWSv4::EKS;
   has '+expires' => (default => 60);
   has '+region' => (default => 'us-east-1');
   has '+service' => (default => 'sts');
-  has '+method' => (default => 'POST');
+  #has '+method' => (default => 'POST');
+  has '+method' => (default => 'GET');
   has '+uri' => (default => '/');
 
   sub build_params {
