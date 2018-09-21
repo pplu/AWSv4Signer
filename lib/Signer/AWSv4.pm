@@ -1,4 +1,3 @@
-#ABSTRACT: Signing library for AWS v4 Signatures
 package Signer::AWSv4;
   use Moo;
   use Types::Standard qw/Str Int HashRef Bool InstanceOf ArrayRef/;
@@ -106,3 +105,63 @@ package Signer::AWSv4;
   });
 
 1;
+### main pod documentation begin ###
+
+=encoding UTF-8
+
+=head1 NAME
+
+Signer::AWSv4 - Implements the AWS v4 signature algorithm
+
+=head1 DESCRIPTION
+
+Yet Another module to sign requests to Amazon Web Services APIs 
+with the AWSv4 signing algorithm. This module has a different twist. The
+rest of modules out there tied to signing HTTP::Request objects, but 
+AWS uses v4 signatures in other places: IAM user login to MySQL RDSs, EKS, 
+S3 Presigned URLs, etc. When building authentication modules for these services, 
+I've had to create artificial HTTP::Request objects, just for a signing module
+to sign them, and then retrieve the signature. This module solves that problem,
+not being tied to any specific object to sign.
+
+Signer::AWSv4 is a base class that implements the main v4 Algorithm. You're supposed
+L<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>
+to subclass and override attributes to adjust how you want the signature to
+be built.
+
+=head1 Specialized Signers
+
+L<Signer::AWSv4::S3> - Build presigned URLs
+
+L<Signer::AWSv4::EKS> - Login to EKS clusters
+
+L<Signer::AWSv4::RDS> - Login to MySQL RDS servers with IAM credentials
+
+=head1 AUTHOR
+
+    Jose Luis Martinez
+    CPAN ID: JLMARTIN
+    CAPSiDE
+    jlmartinez@capside.com
+
+=head1 SEE ALSO
+
+L<AWS::Signature4>
+
+L<Net::Amazon::Signature::V4>
+
+L<WebService::Amazon::Signature::v4>
+
+=head1 BUGS and SOURCE
+
+The source code is located here: L<https://github.com/pplu/AWSv4Signer>
+
+Please report bugs to: L<https://github.com/pplu/AWSv4Signer/issues>
+
+=head1 COPYRIGHT and LICENSE
+
+Copyright (c) 2018 by Jose Luis Martinez Torres
+
+This code is distributed under the Apache 2 License. The full text of the license can be found in the LICENSE file included with this module.
+
+=cut
