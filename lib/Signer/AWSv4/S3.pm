@@ -1,7 +1,7 @@
-package AWSv4::S3;
+package Signer::AWSv4::S3;
   use Moo;
   use Types::Standard qw/Str/;
-  extends 'AWSv4';
+  extends 'Signer::AWSv4';
 
   has bucket => (is => 'ro', isa => Str);
 

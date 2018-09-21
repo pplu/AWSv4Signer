@@ -4,9 +4,9 @@ use strict;
 use warnings;
 
 use Test::More;
-use AWSv4::S3;
+use Signer::AWSv4::S3;
 
-my $signer = AWSv4::S3->new(
+my $signer = Signer::AWSv4::S3->new(
   time => Time::Piece->strptime('20130524T000000Z', '%Y%m%dT%H%M%SZ'),
   access_key => 'AKIAIOSFODNN7EXAMPLE',
   secret_key => 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',

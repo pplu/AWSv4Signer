@@ -1,4 +1,4 @@
-package AWSv4;
+package Signer::AWSv4;
   use Moo;
   use Types::Standard qw/Str Int HashRef Bool InstanceOf ArrayRef/;
   use Time::Piece;

@@ -1,6 +1,6 @@
-package AWSv4::RDS;
+package Signer::AWSv4::RDS;
   use Moo;
-  extends 'AWSv4';
+  extends 'Signer::AWSv4';
   use Types::Standard qw/Str Int/;
 
   has '+expires' => (default => 900);

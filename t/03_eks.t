@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
 
 use Test::More;
-use AWSv4::EKS;
+use Signer::AWSv4::EKS;
 
 # Got this from heptio-authenticator-aws token --cluster-id scrumptious-wardrobe-1531912697 | cut -d '_' -f2 | base64 --decode
 # We use the AK, SK, cluster id and timestamp that heptio-authenticator-aws used.
 # Note: the timestamp is in the X-Amz-Date above
 
-my $signer = AWSv4::EKS->new(
+my $signer = Signer::AWSv4::EKS->new(
   time => Time::Piece->strptime('20180723T145707Z', '%Y%m%dT%H%M%SZ'),
   cluster_id => 'scrumptious-wardrobe-1531912697',
   access_key => 'AKIAKIAKIAKIAKIAKIAK',

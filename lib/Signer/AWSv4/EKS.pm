@@ -1,6 +1,6 @@
-package AWSv4::EKS;
+package Signer::AWSv4::EKS;
   use Moo;
-  extends 'AWSv4';
+  extends 'Signer::AWSv4';
   use Types::Standard qw/Str/;
 
   use JSON::MaybeXS qw//;

@@ -4,9 +4,9 @@ use strict;
 use warnings;
 
 use Test::More;
-use AWSv4::RDS;
+use Signer::AWSv4::RDS;
 
-my $signer = AWSv4::RDS->new(
+my $signer = Signer::AWSv4::RDS->new(
   time => Time::Piece->strptime('20180722T202236Z', '%Y%m%dT%H%M%SZ'),
   access_key => 'AKIAKIAKIAKIAKIAKIAK',
   secret_key => '1111111111111111111111111111111111111111',
