@@ -1,9 +1,12 @@
+#ABSTRACT: Signing library for AWS v4 Signatures
 package Signer::AWSv4;
   use Moo;
   use Types::Standard qw/Str Int HashRef Bool InstanceOf ArrayRef/;
   use Time::Piece;
   use Digest::SHA qw//;
   use URI::Escape qw//;
+
+  our $VERSION = '0.01';
 
   has access_key => (is => 'ro', isa => Str, required => 1);
   has secret_key => (is => 'ro', isa => Str, required => 1);
