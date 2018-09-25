@@ -3,13 +3,18 @@ package Signer::AWSv4::S3;
   use Types::Standard qw/Str/;
   extends 'Signer::AWSv4';
 
-  has bucket => (is => 'ro', isa => Str);
+  has bucket => (is => 'ro', isa => Str, required => 1);
+  has key => (is => 'ro', isa => Str, required => 1);
 
   has '+service' => (default => 's3');
+  has '+uri' => (init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    sprintf "/%s/%s", $self->bucket, $self->key;
+  });
 
   has bucket_host => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
     my $self = shift;
-    join '.', $self->bucket, 's3.amazonaws.com';
+    's3-' . $self->region . '.amazonaws.com';
   });
 
   has '+unsigned_payload' => (default => 1);
