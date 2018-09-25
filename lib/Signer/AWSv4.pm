@@ -9,6 +9,7 @@ package Signer::AWSv4;
 
   has access_key => (is => 'ro', isa => Str, required => 1);
   has secret_key => (is => 'ro', isa => Str, required => 1);
+  has session_token => (is => 'ro', isa => Str);
   has method => (is => 'ro', isa => Str, required => 1);
   has uri => (is => 'ro', isa => Str, required => 1);
   has region => (is => 'ro', isa => Str, required => 1);

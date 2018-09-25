@@ -27,6 +27,7 @@ package Signer::AWSv4::EKS;
       'X-Amz-Date' => $self->date_timestamp,
       'X-Amz-Expires' => $self->expires,
       'X-Amz-SignedHeaders' => $self->signed_header_list,
+      (defined $self->session_token) ? ('X-Amz-Security-Token' => $self->session_token) : (),
     }
   }
 
