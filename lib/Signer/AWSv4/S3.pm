@@ -37,4 +37,15 @@ package Signer::AWSv4::S3;
     }
   }
 
+  has s3_host => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    's3-' . $self->region . '.amazonaws.com';
+  });
+
+
+  has signed_url => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    return join '', 'https://', $self->bucket_host, $self->uri, '?', $self->signed_qstring;
+  });
+
 1;
