@@ -147,7 +147,9 @@ L<Signer::AWSv4::RDS> - Login to MySQL RDS servers with IAM credentials
 
 =head2 access_key
 
-Holds the AWS Access Key to sign with
+Holds the AWS Access Key to sign with. Please don't hardcode your credentials. Get them
+from some AWS authentication readers like L<Net::Amazon::Config>, L<Config::AWS>, 
+L<AWS::CLI::Config>, One of L<Paws::Credential> subclasses.
 
 =head2 secret_key String
 
@@ -252,10 +254,9 @@ The list of signed headers, ready for inclusion in the canonical request
 The canonical request that will be signed. Brings together the method, uri, 
 canonical_qstring, canonical_headers, signed_header_list and hashed_payload
 
-=head2 credential_scope => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
-    my $self = shift;
-    join '/', $self->date, $self->region, $self->service, 'aws4_request';
-  });
+=head2 credential_scope
+
+The credential scope to be used to sign the request
 
 =head2 aws_algorithm
 
