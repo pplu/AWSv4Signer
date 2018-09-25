@@ -17,6 +17,13 @@ package Signer::AWSv4;
 
   has expires => (is => 'ro', isa => Int, required => 1);
 
+  # build_params and build_headers have to be implemented in subclasses to include
+  # the query string parameters (params) and the headers for the request
+  has params  => (is => 'ro', isa => HashRef, lazy => 1, builder => 'build_params');
+  has headers => (is => 'ro', isa => HashRef, lazy => 1, builder => 'build_headers');
+  has content => (is => 'ro', isa => Str, default => '');
+  has unsigned_payload => (is => 'ro', isa => Bool, default => 0);
+
   has time => (is => 'ro', isa => InstanceOf['Time::Piece'], default => sub {
     localtime;
   });
@@ -30,11 +37,6 @@ package Signer::AWSv4;
     my $self = shift;
     $self->time->ymd('') . 'T' . $self->time->hms('') . 'Z';
   });
-
-  has params  => (is => 'ro', isa => HashRef, lazy => 1, builder => 'build_params');
-  has headers => (is => 'ro', isa => HashRef, lazy => 1, builder => 'build_headers');
-  has content => (is => 'ro', isa => Str, default => '');
-  has unsigned_payload => (is => 'ro', isa => Bool, default => 0);
 
   has canonical_qstring => (is => 'ro', isa => Str, lazy => 1, default => sub {
     my $self = shift;
@@ -118,7 +120,7 @@ Signer::AWSv4 - Implements the AWS v4 signature algorithm
 
 Yet Another module to sign requests to Amazon Web Services APIs 
 with the AWSv4 signing algorithm. This module has a different twist. The
-rest of modules out there tied to signing HTTP::Request objects, but 
+rest of modules out there are tied to signing HTTP::Request objects, but 
 AWS uses v4 signatures in other places: IAM user login to MySQL RDSs, EKS, 
 S3 Presigned URLs, etc. When building authentication modules for these services, 
 I've had to create artificial HTTP::Request objects, just for a signing module
@@ -130,13 +132,152 @@ L<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>
 to subclass and override attributes to adjust how you want the signature to
 be built.
 
+It's attributes let you inspect the entire signing process (making the string to
+sign, the signature, etc available for inspection)
+
 =head1 Specialized Signers
 
-L<Signer::AWSv4::S3> - Build presigned URLs
+L<Signer::AWSv4::S3> - Build presigned S3 URLs
 
 L<Signer::AWSv4::EKS> - Login to EKS clusters
 
 L<Signer::AWSv4::RDS> - Login to MySQL RDS servers with IAM credentials
+
+=head1 Request Attributes
+
+=head2 access_key
+
+Holds the AWS Access Key to sign with
+
+=head2 secret_key String
+
+Holds the AWS Secret Key
+
+=head2 session_token String
+
+Optional. The session token when using STS temporary credentials. Some services
+may not support authenticating with temporary credentials.
+
+=head2 method String
+
+The method to sign with. This can be overwritten by subclasses to provide an
+appropiate default for a specific service. 
+
+=head2 uri String
+
+The uri to sign with. This can be overwritten by subclasses to provide an
+appropiate default for a specific service
+
+=head2 region String
+
+The uri to sign with. This can be overwritten by subclasses to provide an
+appropiate default for a specific service
+
+=head2 service String
+
+The service to sign with. This can be overwritten by subclasses to provide an
+appropiate default for a specific service
+
+=head2 expires Integer
+
+The time for which the signature will be valid. This may be defaulted in 
+subclasses so the user doesn't have to specify it.
+
+=head2 params HashRef of Strings
+
+The query parameters to sign. Subclasses must implement a build_params method
+that sets the query parameters to sign appropiately.
+
+=head2 headers HashRef of Strings
+
+The headers to sign. Subclasses must implement a build_headers method that sets
+the headers to sign appropiately.
+
+=head2 content String
+
+The content of the request to be signed.
+
+=head2 unsigned_payload Bool
+
+Indicates wheather the payload (content) should be signed or not.
+
+=head1 Signature Attributes
+
+Attributes for obtaining the final signature
+
+=head1 signature
+
+The final signature. Just a hexadecimal string with the result of signing the request
+
+=head1 signed_qstring
+
+The query string that should be added to a URL to obtain a signed URL (some subclasses
+use this signed query string internally)
+
+=head1 Internal Attributes
+
+The computation of the signature is heald in a series of attributes that are 
+built for dumping, diagnosing and controlling the signature process
+
+=head2 time
+
+A L<Time::Piece> object that holds the time for the signature. Defaulted to "now"
+
+=head2 date, date_timestamp
+
+Values used in intermediate parts of the signature process. Derived from time.
+  
+=head2 canonical_qstring
+
+The Canonical Query String to be used in the signature process.
+
+=head2 header_list
+
+The list of headers to sign. Defaults to all headers in the headers attribute
+
+=head2 canonical_headers
+
+The cannonical list of headers to use in the signature process. Depends on header_list
+
+=head2 hashed_payload
+
+The hashed payload of the request
+
+=head2 signed_header_list
+
+The list of signed headers, ready for inclusion in the canonical request
+
+=head2 canonical_request
+
+The canonical request that will be signed. Brings together the method, uri, 
+canonical_qstring, canonical_headers, signed_header_list and hashed_payload
+
+=head2 credential_scope => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
+    my $self = shift;
+    join '/', $self->date, $self->region, $self->service, 'aws4_request';
+  });
+
+=head2 aws_algorithm
+
+The string that identifies the signing algorithm version. Defaults to C<AWS4-HMAC-SHA256>
+
+=head2 string_to_sign
+
+The string to sign
+
+=head2 signing_key
+
+The signing key
+
+These internal concepts can be found in L<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>, that describes the signature process.
+
+=head1 TODO
+
+Implement a signer for the AWS ElasticSearch service
+
+Implement a generic "sign an HTTP::Request" signer
+
+Pass the same test suite that L<Net::Amazon::Signature::V4> has
 
 =head1 AUTHOR
 
@@ -153,6 +294,8 @@ L<Net::Amazon::Signature::V4>
 
 L<WebService::Amazon::Signature::v4>
 
+L<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>
+
 =head1 BUGS and SOURCE
 
 The source code is located here: L<https://github.com/pplu/AWSv4Signer>
@@ -161,7 +304,7 @@ Please report bugs to: L<https://github.com/pplu/AWSv4Signer/issues>
 
 =head1 COPYRIGHT and LICENSE
 
-Copyright (c) 2018 by Jose Luis Martinez Torres
+Copyright (c) 2018 by CAPSiDE
 
 This code is distributed under the Apache 2 License. The full text of the license can be found in the LICENSE file included with this module.
 
