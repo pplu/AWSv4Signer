@@ -1,6 +1,10 @@
 devel:
 	cpanm -n -l local --installdeps .
 
+build-test-suite:
+	wget -O /tmp/aws-sig-v4-test-suite.zip  https://docs.aws.amazon.com/general/latest/gr/samples/aws-sig-v4-test-suite.zip
+	unzip -d t/ /tmp/aws-sig-v4-test-suite.zip
+
 test: devel
 	PERL5LIB=local/lib/perl5 prove -I lib -v lib t/
 
