@@ -25,7 +25,7 @@ package Signer::AWSv4;
   has unsigned_payload => (is => 'ro', isa => Bool, default => 0);
 
   has time => (is => 'ro', isa => InstanceOf['Time::Piece'], default => sub {
-    localtime;
+    gmtime;
   });
 
   has date => (is => 'ro', isa => Str, init_arg => undef, lazy => 1, default => sub {
