@@ -18,7 +18,7 @@ package Signer::AWSv4::SES;
     return $self->access_key;    
   });
   has smtp_password => (is => 'ro', isa => Str, lazy => 1, builder => '_build_password_v4');
-  has smtp_password_v2 => (is => 'ro', isa => Str, lazy => 1, '_build_password_v2');
+  has smtp_password_v2 => (is => 'ro', isa => Str, lazy => 1, builder => '_build_password_v2');
 
   has smtp_endpoint => (is => 'ro', isa => Str, default => sub {
     my $self = shift;
@@ -39,14 +39,13 @@ package Signer::AWSv4::SES;
      my $self = shift;
  
     my $signature = Digest::SHA::hmac_sha256('SendRawEmail', $self->secret_key);
-    MIME::Base64::encode_base64("\x02" . $signature);
-  });
+    MIME::Base64::encode_base64("\x02" . $signature, '');
+  }
 
   sub _build_password_v4 {
     my $self = shift;
 
-    my $version = "\x04";
-    MIME::Base64::encode_base64($version . $self->signing_key, '');
+    MIME::Base64::encode_base64("\x04" . $self->signing_key, '');
   }
 
 1;
@@ -64,6 +63,7 @@ Signer::AWSv4::SES - Generate passwords for sending email through SES SMTP serve
   $pass_gen = Signer::AWSv4::SES->new(
     access_key => 'AKIAIOSFODNN7EXAMPLE',
     secret_key => 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+    region => 'us-east-1',
   );
   $pass_gen->smtp_password;
 
