@@ -1,11 +1,17 @@
 package Signer::AWSv4::SES;
   use Moo;
-  use Types::Standard qw/Str Int/;
-  use Digest::SHA qw//;
+  extends 'Signer::AWSv4';
+  use Types::Standard qw/Str/;
+
+  use JSON::MaybeXS qw//;
   use MIME::Base64 qw//;
 
-  has access_key => (is => 'ro', isa => Str, required => 1);
-  has secret_key => (is => 'ro', isa => Str, required => 1);
+  has '+expires' => (default => 0);
+  #has '+region' => (default => 'us-east-1');
+  has '+service' => (default => 'ses');
+  has '+method' => (default => '');
+  has '+uri' => (default => '/');
+  has '+date' => (default => '11111111');
 
   has smtp_user => (is => 'ro', isa => Str, default => sub {
     my $self = shift;
@@ -13,13 +19,26 @@ package Signer::AWSv4::SES;
   });
   has smtp_password => (is => 'ro', isa => Str, builder => '_build_password');
 
+  has smtp_endpoint => (is => 'ro', isa => Str, default => sub {
+    my $self = shift;
+    sprintf 'email-smtp.%s.amazonaws.com', $self->region;
+  });
+
+  has '+signing_key' => (default => sub {
+    my $self = shift;
+    my $signature = Digest::SHA::hmac_sha256($self->date, "AWS4" . $self->secret_key);
+    $signature = Digest::SHA::hmac_sha256($self->region, $signature);
+    $signature = Digest::SHA::hmac_sha256($self->service, $signature);
+    $signature = Digest::SHA::hmac_sha256('aws4_request', $signature);
+    $signature = Digest::SHA::hmac_sha256('SendRawEmail', $signature);
+    return $signature;
+  });
+
   sub _build_password {
     my $self = shift;
 
-    my $message = 'SendRawEmail';
-    my $version = "\x02";
-    my $signature = Digest::SHA::hmac_sha256($message, $self->secret_key);
-    MIME::Base64::encode_base64url($version . $signature);
+    my $version = "\x04";
+    MIME::Base64::encode_base64($version . $self->signing_key, '');
   }
 
 1;
@@ -44,6 +63,9 @@ Signer::AWSv4::SES - Generate passwords for sending email through SES SMTP serve
 
 Generate passwords for sending email through SES SMTP servers with IAM credentials.
 The IAM user needs to have the ses:SendRawEmail IAM permission to be able to send mail.
+
+This module generates v4 signatures for SES, unlike lots of other examples around the 
+Internet, that use the old v2 signature scheme.
 
 =head1 Request Attributes
 
