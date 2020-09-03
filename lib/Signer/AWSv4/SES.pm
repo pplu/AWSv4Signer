@@ -78,26 +78,29 @@ password is still there, just in case you want to use it.
 
 =head1 Request Attributes
 
-This module needs only two required attributes in the constructor for obtaining a password:
-
-=head2 access_key String
-
-The AWS IAM Access Key for the IAM user
-
-=head2 user String
-
-The user of the MySQL database
-
-=head2 port Integer
-
-The port the database is running on. Defaults to 3306.
+This module requires C<access_key>, C<secret_key> and C<region> passed to the constructor
 
 =head1 Signature Attributes
 
-=head2 signed_qstring
+=head2 smtp_user
 
-This has to be used as the password for the MySQL Server. Please note that all of this needs
-extra setup: correctly configuring your AWS environment AND your MySQL Client.
+This has to be used as the user for SMTP authentication to the SES SMTP endpoint
+
+=head2 smtp_password
+
+This has to be used as the password the SMTP authentication
+
+=head2 smtp_password_v2
+
+This is the password in Version 2 format (not recommended). It is not dependant on the 
+region, so you can basically pass any value to it if you're only interested in the v2
+signature.
+
+=head1 Extra Attributes
+
+=head2 smtp_endpoint
+
+This calculates the name of the SMTP endpoint in funtion of the region.
 
 =head1 SEE ALSO
 
