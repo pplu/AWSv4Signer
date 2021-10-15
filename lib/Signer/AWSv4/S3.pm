@@ -5,6 +5,11 @@ package Signer::AWSv4::S3;
 
   has bucket => (is => 'ro', isa => Str, required => 1);
   has key => (is => 'ro', isa => Str, required => 1);
+  has content_disposition => (is => 'ro', isa => Str);
+  has content_type => (is => 'ro', isa => Str);
+  has content_encoding => (is => 'ro', isa => Str);
+  has content_language => (is => 'ro', isa => Str);
+  has cache_control => (is => 'ro', isa => Str);  
   has version_id => (is => 'ro', isa => Str);
 
   has '+service' => (default => 's3');
@@ -32,6 +37,11 @@ package Signer::AWSv4::S3;
       'X-Amz-Date' => $self->date_timestamp,
       'X-Amz-Expires' => $self->expires,
       'X-Amz-SignedHeaders' => $self->signed_header_list,
+      ('response-content-disposition' => $self->content_disposition) x!! $self->content_disposition,
+      ('response-content-type' => $self->content_type) x!! $self->content_type,
+      ('response-content-encoding' => $self->content_encoding) x!! $self->content_encoding,
+      ('response-content-language' => $self->content_language) x!! $self->content_language,
+      ('response-cache-control' => $self->cache_control) x!! $self->cache_control,  
       (versionId => $self->version_id) x!! $self->version_id,
     }
   }
