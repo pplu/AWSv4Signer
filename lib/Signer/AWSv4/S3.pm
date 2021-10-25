@@ -78,6 +78,9 @@ Signer::AWSv4::S3 - Implements the AWS v4 signature algorithm
     bucket => 'examplebucket',
     region => 'us-east-1',
     expires => 86400,
+    version_id => '1234561zOnAAAJKHxVKBxxEyuy_78901j',
+    content_type => 'text/plain',
+    content_disposition => 'inline; filename=New Name.txt',  
   );
   say $s3_sig->signed_url;
 
@@ -97,6 +100,34 @@ The name of the object in S3. This should not start with a slash (/)
 =head2 bucket
 
 The name of the S3 bucket
+
+=head2 versionId
+
+VersionId used to reference a specific version of the object.
+
+=head1 Overriding Response Header Values
+
+There are times when you want to override certain response header values in a GET response.
+
+=head2 cache_control
+
+Sets the Cache-Control header of the response.
+
+=head2 content_disposition
+
+Sets the Content-Disposition header of the response
+
+=head2 content_encoding
+
+Sets the Content-Encoding header of the response.
+
+=head2 content_language
+
+Sets the Content-Language header of the response.
+
+=head2 content_type
+
+Sets the Content-Type header of the response.
 
 =head1 Signature Attributes
 
