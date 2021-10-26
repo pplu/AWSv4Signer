@@ -12,14 +12,20 @@ package Signer::AWSv4::HTTPRequest;
 
   sub build_params {
     my $self = shift;
-    {
+
+    # decode the POST payload into a hash representing the parameters
+    my @params = split(/&/, $self->request->content);
+    return {
+      map { split /=/, $_ } @params
     }
   }
 
   sub build_headers {
     my $self = shift;
-    {
-    }
+
+    my $h = {};
+    $self->request->headers->scan(sub { $h->{ $_[0] } = $_[1] });
+    return $h;
   }
 
 1;
