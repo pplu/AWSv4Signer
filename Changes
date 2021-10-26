@@ -1,3 +1,17 @@
+0.07 2021-10-26
+ - S3: Enable response header override parameters (lucas1)
+
+0.06 2021-09-03
+ - S3: enable version parameter for S3 objects (mschout)
+
+0.05 2019-09-04
+ - S3: use correct hostname for buckets in us-east-1 (Issue #2). Thanks namotco
+ - introduce a new SES signer for obtaining SES passwords
+
+0.04 2018-11-28
+ - use gmtime instead of localtime. Only machines in GMT could
+   sign properly
+
 0.03 2018-09-27
  - Correct prereqs for CPANTS (manwar)
 
