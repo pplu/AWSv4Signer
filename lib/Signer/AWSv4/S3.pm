@@ -36,6 +36,7 @@ package Signer::AWSv4::S3;
       'X-Amz-Credential' => $self->access_key . "/" . $self->credential_scope,
       'X-Amz-Date' => $self->date_timestamp,
       'X-Amz-Expires' => $self->expires,
+      ($self->session_token ? ('X-Amz-Security-Token' => $self->session_token) : () ),
       'X-Amz-SignedHeaders' => $self->signed_header_list,
       ('response-content-disposition' => $self->content_disposition) x!! $self->content_disposition,
       ('response-content-type' => $self->content_type) x!! $self->content_type,
